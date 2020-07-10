@@ -35,7 +35,7 @@ make -j2 && make install
 ln -sf /usr/local/nginx/sbin/nginx /usr/bin/nginx
 ln -sf /usr/local/luajit/lib/libluajit-5.1.so.2 /lib64/libluajit-5.1.so.2
 
-
+mkdir -p /usr/local/nginx/conf/waf/
 cd /opt/
 wget https://github.com/weakestan/ngx_lua_waf/archive/master.zip --no-check-certificate
 unzip master.zip
