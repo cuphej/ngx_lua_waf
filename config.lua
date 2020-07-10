@@ -1,4 +1,4 @@
-RulePath = "/etc/nginx/waf/wafconf/"
+RulePath = "/usr/local/nginx/conf/waf/wafconf/"
 attacklog = "on"
 --保存日志到文件
 logtofile = "off"
