@@ -45,3 +45,8 @@ rm -rf ngx_lua_waf-master
 #rm -rf /opt/*
 mkdir -p /data/logs/hack
 chmod -R 775 /data/logs/hack
+cat >> /etc/profile <<EOF
+export NGINX_HOME=/usr/local/nginx
+export PATH=$PATH:$NGINX_HOME/sbin
+EOF
+source /etc/profile
