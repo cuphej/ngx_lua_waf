@@ -1,47 +1,47 @@
-mkdir -p /data/src
-cd /data/src
-if [ ! -x "LuaJIT-2.0.0.tar.gz" ]; then  
-wget http://luajit.org/download/LuaJIT-2.0.0.tar.gz
-fi
-tar zxvf LuaJIT-2.0.0.tar.gz
-cd LuaJIT-2.0.0
-make
-make install PREFIX=/usr/local/lj2
-ln -s /usr/local/lj2/lib/libluajit-5.1.so.2 /lib64/
-cd /data/src
-if [ ! -x "v0.2.17rc2.zip" ]; then  
-wget https://github.com/simpl/ngx_devel_kit/archive/v0.2.17rc2.zip
-fi
-unzip v0.2.17rc2
-if [ ! -x "v0.7.4.zip" ]; then  
-wget https://github.com/chaoslawful/lua-nginx-module/archive/v0.7.4.zip
-fi
-unzip v0.7.4
-cd /data/src
-if [ ! -x "pcre-8.10.tar.gz" ]; then
-wget http://blog.s135.com/soft/linux/nginx_php/pcre/pcre-8.10.tar.gz
-fi
-tar zxvf pcre-8.10.tar.gz
-cd pcre-8.10/
-./configure
-make && make install
-cd ..
-if [ ! -x "nginx-1.2.4.tar.gz" ]; then
-wget 'http://nginx.org/download/nginx-1.2.4.tar.gz'
-fi
-tar -xzvf nginx-1.2.4.tar.gz
-cd nginx-1.2.4/
-export LUAJIT_LIB=/usr/local/lj2/lib/
-export LUAJIT_INC=/usr/local/lj2/include/luajit-2.0/
-./configure --user=daemon --group=daemon --prefix=/usr/local/nginx/ --with-http_stub_status_module --with-http_sub_module --with-http_gzip_static_module --without-mail_pop3_module --without-mail_imap_module --without-mail_smtp_module  --add-module=../ngx_devel_kit-0.2.17rc2/ --add-module=../lua-nginx-module-0.7.4/
-make -j8
-make install 
-#rm -rf /data/src
-cd /usr/local/nginx/conf/
-wget https://github.com/loveshell/ngx_lua_waf/archive/master.zip --no-check-certificate
+yum -y install gcc gcc-c++ autoconf automake make vim wget unzip
+cd /opt 
+wget http://luajit.org/download/LuaJIT-2.0.5.tar.gz
+tar zxf LuaJIT-2.0.5.tar.gz && LuaJIT-2.0.5/
+make install PREFIX=/usr/local/luajit
+echo "LUAJIT_LIB=/usr/local/luajit/lib" >> /etc/environment
+echo "LUAJIT_INC=/usr/local/luajit/include/luajit-2.0" >> /etc/environment
+yum install -y lua-devel 
+
+cd /opt 
+wget https://github.com/simplresty/ngx_devel_kit/archive/v0.3.1rc1.tar.gz && tar zxf v0.3.1rc1.tar.gz -C /opt
+cd /opt
+wget https://github.com/openresty/lua-nginx-module/archive/v0.10.13.tar.gz && tar zxf v0.10.13.tar.gz -C /opt
+cd /opt
+wget http://downloads.sourceforge.net/project/pcre/pcre/8.39/pcre-8.39.tar.gz && tar zxf pcre-8.39.tar.gz -C /opt
+cd /opt 
+wget https://www.openssl.org/source/openssl-1.0.2j.tar.gz && tar zxf openssl-1.0.2j.tar.gz -C /opt
+cd /opt
+wget http://zlib.net/zlib-1.2.11.tar.gz && tar zxf zlib-1.2.11.tar.gz -C /opt
+cd /opt
+wget http://nginx.org/download/nginx-1.10.3.tar.gz
+tar -xzvf nginx-1.10.3.tar.gz
+
+cd nginx-1.10.3
+./configure \
+--prefix=/usr/local/nginx \
+--add-module=/opt/ngx_devel_kit-0.3.1rc1 \
+--add-module=/opt/lua-nginx-module-0.10.13 \
+--with-pcre=/opt/pcre-8.39 \
+--with-openssl=/opt/openssl-1.0.2j \
+--with-zlib=/opt/zlib-1.2.11 \
+--with-http_gzip_static_module \
+--with-http_ssl_module
+make -j2 && make install
+ln -sf /usr/local/nginx/sbin/nginx /usr/bin/nginx
+ln -sf /usr/local/luajit/lib/libluajit-5.1.so.2 /lib64/libluajit-5.1.so.2
+
+
+cd /opt/
+wget https://github.com/weakestan/ngx_lua_waf/archive/master.zip --no-check-certificate
 unzip master.zip
-mv ngx_lua_waf-master/* /usr/local/nginx/conf/
+mv ngx_lua_waf-master/* /usr/local/nginx/conf/waf/
+#mv -f /opt/nginx.conf /usr/local/nginx/conf
 rm -rf ngx_lua_waf-master
-rm -rf /data/src
+#rm -rf /opt/*
 mkdir -p /data/logs/hack
 chmod -R 775 /data/logs/hack
